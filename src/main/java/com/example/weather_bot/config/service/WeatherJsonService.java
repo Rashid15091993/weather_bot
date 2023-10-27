@@ -1,6 +1,8 @@
 package com.example.weather_bot.config.service;
 
-public interface WeatherJsonService {
+import com.example.weather_bot.config.WeatherDto;
+import com.fasterxml.jackson.databind.JsonNode;
 
-    void getJsonWeather();
+public interface WeatherJsonService {
+    String getWeatherCity();
 }

@@ -43,16 +43,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update request) {
         requestMessage = request.getMessage();
         response.setChatId(requestMessage.getChatId().toString());
-        weatherJsonService.getJsonWeather();
+
         var entity = new User(
                 0, requestMessage.getChat().getUserName(),
                 requestMessage.getText());
-
-        if (request.hasMessage() && requestMessage.hasText())
+        if (request.hasMessage() && requestMessage.hasText()) {
             log.info("Working onUpdateReceived, request text[{}]", request.getMessage().getText());
+        }
 
-        if (requestMessage.getText().equals("/start"))
+        if (requestMessage.getText().equals("/start")) {
+            response.setText(weatherJsonService.getWeatherCity());
+            execute(response);
             defaultMsg(response, "Напишите команду для показа списка мыслей: \n " + "/idea - показать мысли");
+        }
         else if (requestMessage.getText().equals("/idea"))
 
         log.info("Working, text[{}]", requestMessage.getText());
