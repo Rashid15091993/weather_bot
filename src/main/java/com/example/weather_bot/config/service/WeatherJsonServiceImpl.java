@@ -38,16 +38,16 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
 
 
     private JsonNode getJsonWeather(String fieldName, String city) {
+        List<String> lonLat = getLonLat(city);
         headers.set("X-Yandex-API-Key", weatherYandexkey);
-        StringBuilder stringBuilderUrl = new StringBuilder();
-        stringBuilderUrl.append(urlYandex);
-        stringBuilderUrl.append(getLonLat(city).get(0));
-        stringBuilderUrl.append("&lon=");
-        stringBuilderUrl.append(getLonLat(city).get(1));
+
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlYandex)
+                .queryParam("lat", lonLat.get(0))
+                .queryParam("lon", lonLat.get(1));
 
         ResponseEntity<String> response = restTemplate.exchange(
-                urlYandex, HttpMethod.GET, requestEntity, String.class, headers);
+                builder.toUriString(), HttpMethod.GET, requestEntity, String.class, headers);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = null;
         log.info(response.getBody());
