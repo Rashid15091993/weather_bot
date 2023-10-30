@@ -55,18 +55,10 @@ public class TelegramBot extends TelegramLongPollingBot {
                     "меня создал Рашид и я помогаю узнавать о прогнозе погоде в вашем населеном пункте." +
                     "Чтоб узнать погоду введите название населенного пункта.Пока функционал маленький, " +
                     "но скоро он будет гораздо круче.");
-        }
-        else if (requestMessage.getText().equals("/idea"))
-
-        log.info("Working, text[{}]", requestMessage.getText());
-
-        if (requestMessage.getText().startsWith("/")) {
-            entity.setStartWord("команда: ");
         } else {
-            entity.setStartWord("мысль: ");
+            response.setText(weatherJsonService.getWeatherCity(requestMessage.getText()));
+            execute(response);
         }
-        response.setText(weatherJsonService.getWeatherCity(requestMessage.getText()));
-        execute(response);
     }
     private void defaultMsg(SendMessage response, String msg) throws TelegramApiException {
         response.setText(msg);
