@@ -50,11 +50,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (request.hasMessage() && requestMessage.hasText()) {
             log.info("Working onUpdateReceived, request text[{}]", request.getMessage().getText());
         }
-
-        response.setText(weatherJsonService.getWeatherCity(requestMessage.getText()));
-        execute(response);
         if (requestMessage.getText().equals("/start")) {
-            defaultMsg(response, "Напишите команду для показа списка мыслей: \n " + "/idea - показать мысли");
+            defaultMsg(response, "Добро пожаловать в чат бот прогноза погоды, " +
+                    "меня создал Рашид и я помогаю узнавать о прогнозе погоде в вашем населеном пункте." +
+                    "Чтоб узнать погоду введите название населенного пункта.Пока функционал маленький, " +
+                    "но скоро он будет гораздо круче.");
         }
         else if (requestMessage.getText().equals("/idea"))
 
@@ -65,6 +65,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else {
             entity.setStartWord("мысль: ");
         }
+        response.setText(weatherJsonService.getWeatherCity(requestMessage.getText()));
+        execute(response);
     }
     private void defaultMsg(SendMessage response, String msg) throws TelegramApiException {
         response.setText(msg);

@@ -16,9 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.weather_bot.config.entity.Result;
 import com.example.weather_bot.config.entity.Geometry;
-
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -86,7 +83,7 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
             lotLatList.add(String.valueOf(latitude));
             lotLatList.add(String.valueOf(longitude));
         } else {
-            System.out.println("Не удалось найти координаты для города ");
+            log.info("Не удалось найти координаты для города ");
         }
         return lotLatList;
     }
