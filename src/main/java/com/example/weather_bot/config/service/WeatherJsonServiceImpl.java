@@ -69,8 +69,8 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         weatherMap.put("city", getJsonWeather("geo_object", city).get("locality").get("name").asText());
         weatherMap.put("tempFact", getJsonWeather("fact", city).get("temp").asText());
 
-        stringBuilder.append("Город -> ").append(weatherMap.get("city")).append("\n");
-        stringBuilder.append("Температура сегодня -> ").append(weatherMap.get("tempFact")).append("\n");
+        stringBuilder.append("Населенный пункт -> ").append(weatherMap.get("city")).append("\n");
+        stringBuilder.append("Температура сейчас -> ").append(weatherMap.get("tempFact")).append("\n");
         return stringBuilder.toString();
     }
     private List<String> getLonLat(String city) {
