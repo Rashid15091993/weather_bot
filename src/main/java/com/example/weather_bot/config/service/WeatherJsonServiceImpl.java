@@ -17,6 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.weather_bot.config.entity.Result;
 import com.example.weather_bot.config.entity.Geometry;
 
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
@@ -44,7 +47,8 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlYandex)
                 .queryParam("lat", lonLat.get(0))
-                .queryParam("lon", lonLat.get(1));
+                .queryParam("lon", lonLat.get(1))
+                .queryParam("lang", "ru_RU");
 
         ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(), HttpMethod.GET, requestEntity, String.class, headers);
@@ -59,16 +63,14 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         return root.get(fieldName);
     }
 
-    public String getWeatherCity() {
+    public String getWeatherCity(String city) {
         StringBuilder stringBuilder = new StringBuilder();
         Map<String, String> weatherMap = new HashMap<>();
-        weatherMap.put("Город", getJsonWeather("geo_object", "Kaspiysk").get("locality").get("name").asText());
-        //weatherMap.put("Погода сегодня", getJsonWeather("fact", "").get("temp").asText());
+        weatherMap.put("city", getJsonWeather("geo_object", city).get("locality").get("name").asText());
+        weatherMap.put("tempFact", getJsonWeather("fact", city).get("temp").asText());
 
-        for(String key : weatherMap.keySet()) {
-            mapValue = weatherMap.get(key);
-            stringBuilder.append(mapValue).append("\n");
-        }
+        stringBuilder.append("Город -> ").append(weatherMap.get("city")).append("\n");
+        stringBuilder.append("Температура сегодня -> ").append(weatherMap.get("tempFact")).append("\n");
         return stringBuilder.toString();
     }
     private List<String> getLonLat(String city) {
@@ -89,14 +91,9 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         return lotLatList;
     }
     public GeoLocation getGeoLocation(String city) {
-
-        String lan = "ru";
-        String pr = "1";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlGeoCode)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlGeoCode).encode(StandardCharsets.US_ASCII)
                 .queryParam("q", city)
-                .queryParam("key", geoCodeKey)
-                .queryParam("language", lan)
-                .queryParam("pretty", pr);
+                .queryParam("key", geoCodeKey);
 
         ResponseEntity<GeoLocation> response = restTemplate.getForEntity(builder.toUriString(), GeoLocation.class);
         return response.getBody();
