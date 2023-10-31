@@ -1,7 +1,7 @@
-package com.example.weather_bot.config;
+package com.example.weather_bot.app;
 
-import com.example.weather_bot.config.entity.User;
-import com.example.weather_bot.config.service.WeatherJsonService;
+import com.example.weather_bot.entity.User;
+import com.example.weather_bot.service.WeatherJsonService;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

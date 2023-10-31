@@ -1,4 +1,4 @@
-package com.example.weather_bot.config;
+package com.example.weather_bot.entity.dto;
 
 import lombok.Data;
 

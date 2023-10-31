@@ -1,6 +1,8 @@
-package com.example.weather_bot.config.service;
+package com.example.weather_bot.service;
 
-import com.example.weather_bot.config.entity.GeoLocation;
+import com.example.weather_bot.entity.GeoLocation;
+import com.example.weather_bot.entity.Geometry;
+import com.example.weather_bot.entity.Result;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,8 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.weather_bot.config.entity.Result;
-import com.example.weather_bot.config.entity.Geometry;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 

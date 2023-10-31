@@ -1,4 +1,4 @@
-package com.example.weather_bot.config.entity;
+package com.example.weather_bot.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
