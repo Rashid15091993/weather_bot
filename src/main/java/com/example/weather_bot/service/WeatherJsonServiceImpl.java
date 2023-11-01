@@ -1,13 +1,16 @@
 package com.example.weather_bot.service;
 
-import com.example.weather_bot.entity.GeoLocation;
-import com.example.weather_bot.entity.Geometry;
-import com.example.weather_bot.entity.Result;
+import com.example.weather_bot.entity.*;
+import com.example.weather_bot.entity.dto.WeatherDto;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +39,9 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
     @Value("${open-cage-data-key}")
     private String geoCodeKey;
 
+    @Autowired
+    WeatherInfoService weatherInfoService;
+
 
     private JsonNode getJsonWeather(String fieldName, String city) {
         List<String> lonLat = getLonLat(city);
@@ -59,16 +65,9 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         }
         return root.get(fieldName);
     }
-
     public String getWeatherCity(String city) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Map<String, String> weatherMap = new HashMap<>();
-        weatherMap.put("city", getJsonWeather("geo_object", city).get("locality").get("name").asText());
-        weatherMap.put("tempFact", getJsonWeather("fact", city).get("temp").asText());
-
-        stringBuilder.append("Населенный пункт -> ").append(weatherMap.get("city")).append("\n");
-        stringBuilder.append("Температура сейчас -> ").append(weatherMap.get("tempFact")).append("\n");
-        return stringBuilder.toString();
+        WeatherDto weatherDto = getWeatherInfoCache(city);
+        return weatherInfoService.getWeatherInfo(weatherDto);
     }
     private List<String> getLonLat(String city) {
         GeoLocation geoLocation = getGeoLocation(city);
@@ -86,6 +85,18 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
             log.info("Не удалось найти координаты для города ");
         }
         return lotLatList;
+    }
+    public WeatherDto createWeatherDto(String cityName) {
+        WeatherDto weatherDto = new WeatherDto();
+        weatherDto.setCity(getJsonWeather("geo_object", cityName).get("locality").get("name").asText());
+        weatherDto.setTempFact(getJsonWeather("fact", cityName).get("temp").asText());
+        weatherDto.setPrecStrength(getJsonWeather("fact", cityName).get("prec_strength").asText());
+        weatherDto.setSeason(getJsonWeather("fact", cityName).get("season").asText());
+        return weatherDto;
+    }
+    //@Cacheable(cacheNames="weather")
+    public WeatherDto getWeatherInfoCache(String city) {
+        return createWeatherDto(city);
     }
     public GeoLocation getGeoLocation(String city) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlGeoCode).encode(StandardCharsets.US_ASCII)
