@@ -91,6 +91,7 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         weatherDto.setCity(getJsonWeather("geo_object", cityName).get("locality").get("name").asText());
         weatherDto.setTempFact(getJsonWeather("fact", cityName).get("temp").asText());
         weatherDto.setPrecStrength(getJsonWeather("fact", cityName).get("prec_strength").asText());
+        weatherDto.setPrecType(getJsonWeather("fact", cityName).get("prec_type").asText());
         weatherDto.setSeason(getJsonWeather("fact", cityName).get("season").asText());
         return weatherDto;
     }

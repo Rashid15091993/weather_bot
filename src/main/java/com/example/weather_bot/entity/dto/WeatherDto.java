@@ -9,5 +9,6 @@ public class WeatherDto {
     private String city;
     private String tempFact;
     private String precStrength;
+    private String precType;
     private String season;
 }
