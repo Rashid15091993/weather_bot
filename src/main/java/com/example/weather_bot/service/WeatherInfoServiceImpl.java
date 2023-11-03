@@ -17,22 +17,42 @@ public class WeatherInfoServiceImpl implements WeatherInfoService {
         stringBuilder.append("Населенный пункт -> ").append(weatherDto.getCity()).append("\n");
         stringBuilder.append("Температура сейчас -> ").append(weatherDto.getTempFact()).append("\n");
         stringBuilder.append("Тип осадков -> ").append(getPrecipitationType(weatherDto.getPrecType())).append("\n");
-        stringBuilder.append("Сила осадков -> ").append(getPrecipitation(weatherDto.getPrecStrength())).append("\n");
+        stringBuilder.append("Сила осадков -> ").append(getPrecipitation(weatherDto.getPrecStrength(), weatherDto.getPrecType())).append("\n");
         stringBuilder.append("Время года -> ").append(getSeasonRus(weatherDto.getSeason())).append("\n");
         return stringBuilder.toString();
     }
 
-    private String getPrecipitation(String precipitationNum) {
+    private String getPrecipitation(String precipitationNum, String precipType) {
+        String precType = getPrecipitationType(precipType);
         Map<String, String> precipitationMap = new HashMap<>();
         precipitationMap.put("0", PrecEnum.NO_PRECIPITATION.toString());
-        precipitationMap.put("0.25", PrecEnum.LIGHT_RAIN.toString());
-        precipitationMap.put("0.25", PrecEnum.LIGHT_SNOW.toString());
-        precipitationMap.put("0.5", PrecEnum.RAIN.toString());
-        precipitationMap.put("0.5", PrecEnum.SNOW.toString());
-        precipitationMap.put("0.75", PrecEnum.HEAVY_RAIN.toString());
-        precipitationMap.put("0.75", PrecEnum.HEAVY_SNOW.toString());
-        precipitationMap.put("1", PrecEnum.HEAVY_DOWNPOUR.toString());
-        precipitationMap.put("1", PrecEnum.VERY_HEAVY_SNOW.toString());
+        switch (precType) {
+            case "Дождь":
+                precipitationMap.put("0.25", PrecEnum.LIGHT_RAIN.toString());
+                precipitationMap.put("0.5", PrecEnum.RAIN.toString());
+                precipitationMap.put("0.75", PrecEnum.HEAVY_RAIN.toString());
+                precipitationMap.put("1", PrecEnum.HEAVY_DOWNPOUR.toString());
+                break;
+            case "Снег":
+                precipitationMap.put("0.25", PrecEnum.LIGHT_SNOW.toString());
+                precipitationMap.put("0.5", PrecEnum.SNOW.toString());
+                precipitationMap.put("0.75", PrecEnum.HEAVY_SNOW.toString());
+                precipitationMap.put("1", PrecEnum.VERY_HEAVY_SNOW.toString());
+                break;
+            case "Дождь со снегом":
+                precipitationMap.put("0.25", PrecEnum.LIGHT_RAIN_SNOW.toString());
+                precipitationMap.put("0.5", PrecEnum.RAIN_SNOW.toString());
+                precipitationMap.put("0.75", PrecEnum.HEAVY_RAIN_SNOW.toString());
+                precipitationMap.put("1", PrecEnum.VERY_HEAVY_RAIN_SNOW.toString());
+                break;
+            case "Град":
+                precipitationMap.put("0.25", PrecEnum.LIGHT_HAIL.toString());
+                precipitationMap.put("0.5", PrecEnum.HAIL.toString());
+                precipitationMap.put("0.75", PrecEnum.HEAVY_HAIL.toString());
+                precipitationMap.put("1", PrecEnum.VERY_HEAVY_HAIL.toString());
+                break;
+        }
+
         return precipitationMap.get(precipitationNum);
     }
     private String getPrecipitationType(String precipitationNum) {
