@@ -4,13 +4,18 @@ import com.example.weather_bot.entity.PrecEnum;
 import com.example.weather_bot.entity.PrecTypeEnum;
 import com.example.weather_bot.entity.SeasonEnum;
 import com.example.weather_bot.entity.dto.WeatherDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class WeatherInfoServiceImpl implements WeatherInfoService {
+    @Cacheable(cacheNames="weather")
     @Override
     public String getWeatherInfo(WeatherDto weatherDto) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -19,9 +24,9 @@ public class WeatherInfoServiceImpl implements WeatherInfoService {
         stringBuilder.append("Тип осадков -> ").append(getPrecipitationType(weatherDto.getPrecType())).append("\n");
         stringBuilder.append("Сила осадков -> ").append(getPrecipitation(weatherDto.getPrecStrength(), weatherDto.getPrecType())).append("\n");
         stringBuilder.append("Время года -> ").append(getSeasonRus(weatherDto.getSeason())).append("\n");
+        log.info("Weather Info {}", stringBuilder.toString());
         return stringBuilder.toString();
     }
-
     private String getPrecipitation(String precipitationNum, String precipType) {
         String precType = getPrecipitationType(precipType);
         Map<String, String> precipitationMap = new HashMap<>();

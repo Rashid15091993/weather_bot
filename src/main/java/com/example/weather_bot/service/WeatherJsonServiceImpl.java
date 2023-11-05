@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
@@ -66,7 +67,7 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         return root.get(fieldName);
     }
     public String getWeatherCity(String city) {
-        WeatherDto weatherDto = getWeatherInfoCache(city);
+        WeatherDto weatherDto = createWeatherDto(city);
         return weatherInfoService.getWeatherInfo(weatherDto);
     }
     private List<String> getLonLat(String city) {
@@ -94,10 +95,6 @@ public class WeatherJsonServiceImpl implements WeatherJsonService {
         weatherDto.setPrecType(getJsonWeather("fact", cityName).get("prec_type").asText());
         weatherDto.setSeason(getJsonWeather("fact", cityName).get("season").asText());
         return weatherDto;
-    }
-    //@Cacheable(cacheNames="weather")
-    public WeatherDto getWeatherInfoCache(String city) {
-        return createWeatherDto(city);
     }
     public GeoLocation getGeoLocation(String city) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlGeoCode).encode(StandardCharsets.US_ASCII)
